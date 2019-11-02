@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- 数据库连接池 -->
+  <bean id="dbDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+        destroy-method="close" lazy-init="false">
+    <property name="url" value="${jdbc.url}" />
+    <property name="username" value="${jdbc.username}" />
+<!--    <property name="password" value="${jdbc.password}" />-->
+    <property name="driverClassName" value="${jdbc.driver}" />
+
+    <property name="maxActive" value="${jdbc.maxActive}" />
+    <property name="initialSize" value="${jdbc.initialSize}" />
+    <property name="maxWait" value="${jdbc.maxWait}" />
+    <property name="minIdle" value="${jdbc.minIdle}" />
+
+    <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+    <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+
+    <property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+    <property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+    <property name="testOnReturn" value="${jdbc.testOnReturn}" />
+
+    <property name="poolPreparedStatements" value="${jdbc.poolPreparedStatements}" />
+    <property name="maxOpenPreparedStatements" value="${jdbc.maxOpenPreparedStatements}" />
+
+    <property name="filters" value="stat" />
+  </bean>
+
+  <!-- sql工厂，配置数据源及mybatis的文件 -->
+  <bean id="testSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dbDataSource" />
+    <property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
+  </bean>
+
+  <!-- mapper扫描配置，主要用于扫描DAO -->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <!-- 注意：在配置多个数据源时，扫描包不能交叉，只能扫描自己package DAO，最好每个数据源有自己的目录 -->
+    <property name="basePackage" value="com.zgb.dao.test" />
+    <property name="sqlSessionFactoryBeanName" value="testSessionFactory" />
+  </bean>
+</beans>
